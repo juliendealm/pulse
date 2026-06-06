@@ -1,6 +1,6 @@
 # Pulse — Status
 
-Dernière mise à jour : 2026-06-07
+Dernière mise à jour : 2026-06-08
 
 ## Phase actuelle : M1 — Croissance (0 monétisation)
 Objectif : 5 000 users actifs avant de toucher à la monétisation.
@@ -18,6 +18,8 @@ Objectif : 5 000 users actifs avant de toucher à la monétisation.
 - [x] Partage natif (Web Share API + fallback clipboard)
 - [x] Déploiement Vercel : https://pulse-eight-roan.vercel.app
 - [x] Fix timezone UTC → locale
+- [x] Git + GitHub repo privé connecté à Vercel (deploy auto sur push main)
+- [x] Cron GitHub Actions — question du jour automatique à 6h Paris (55 questions en banque)
 
 ---
 
@@ -29,9 +31,7 @@ Rien — MVP stable.
 
 ## Backlog priorisé
 
-### Sprint 1 — Infrastructure (unblocking)
-- [ ] **Cron automatique questions** — Supabase Edge Function + pg_cron, génère la question chaque jour à 6h sans intervention manuelle. Priorité absolue : si on oublie un jour l'app est morte.
-- [ ] **Git + GitHub** — repo propre, branching, déploiement auto sur push main
+### Sprint 1 — Infrastructure ✅ DONE
 
 ### Sprint 2 — Rétention
 - [ ] **Auth utilisateur** — Supabase Auth (magic link email). Prérequis pour Premium et analytics.
