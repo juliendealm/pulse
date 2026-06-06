@@ -9,6 +9,7 @@ on:
       - 'package.json'
       - 'vite.config.js'
       - 'public/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
