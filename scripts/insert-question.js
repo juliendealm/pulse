@@ -45,8 +45,12 @@ async function insertQuestion(text, options, date) {
     body: JSON.stringify({ text, options, date }),
   })
   if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Insert failed: ${err}`)
+    const err = await res.json()
+    if (err.code === '23505') {
+      console.log('Question already exists for today, skipping.')
+      return
+    }
+    throw new Error(`Insert failed: ${JSON.stringify(err)}`)
   }
 }
 
