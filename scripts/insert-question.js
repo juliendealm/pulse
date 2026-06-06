@@ -51,7 +51,7 @@ async function insertQuestion(text, options, date) {
 }
 
 async function run() {
-  const today = new Date().toLocaleDateString('en-CA')
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' })
   console.log(`Inserting question for ${today}`)
 
   const used = await getUsedQuestions()
