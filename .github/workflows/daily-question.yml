@@ -1,0 +1,22 @@
+name: Daily Question
+
+on:
+  schedule:
+    - cron: '0 5 * * *'  # 6h Paris (UTC+1 hiver / UTC+2 été — on vise 6h)
+  workflow_dispatch:       # déclenchement manuel depuis GitHub Actions
+
+jobs:
+  insert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Insert question du jour
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/insert-question.js
