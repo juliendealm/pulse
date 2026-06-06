@@ -48,10 +48,11 @@ async function insertQuestion(text, options, date) {
     const err = await res.json()
     if (err.code === '23505') {
       console.log('Question already exists for today, skipping.')
-      return
+      return false
     }
     throw new Error(`Insert failed: ${JSON.stringify(err)}`)
   }
+  return true
 }
 
 async function run() {
@@ -67,8 +68,8 @@ async function run() {
   }
 
   const options = OPTIONS_POOL[Math.floor(Math.random() * OPTIONS_POOL.length)]
-  await insertQuestion(next, options, today)
-  console.log(`Inserted: "${next}"`)
+  const inserted = await insertQuestion(next, options, today)
+  if (inserted) console.log(`Inserted: "${next}"`)
 }
 
 run().catch(err => {
