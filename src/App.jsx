@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import Countdown from './components/Countdown'
 import VoteOption from './components/VoteOption'
 import ShareButton from './components/ShareButton'
+import Archives from './pages/Archives'
 import { useQuestion } from './lib/useQuestion'
 import { useVote } from './lib/useVote'
 
@@ -10,8 +12,11 @@ function getPct(votes, key, total) {
 }
 
 export default function App() {
+  const [page, setPage] = useState('home')
   const { question, votes, totalVotes, loading, error } = useQuestion()
   const { userVote, castVote } = useVote(question?.id)
+
+  if (page === 'archives') return <Archives onBack={() => setPage('home')} />
 
   if (loading) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Chargement...</p></Screen>
   if (error) return <Screen><p style={{ color:'var(--red)', fontSize:14 }}>Erreur : {error}</p></Screen>
@@ -26,7 +31,14 @@ export default function App() {
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
-      <div style={{ fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, letterSpacing:'4px', color:'var(--red)', textAlign:'center', marginBottom:8 }}>PULSE</div>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+        <div style={{ width:60 }} />
+        <div style={{ fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, letterSpacing:'4px', color:'var(--red)' }}>PULSE</div>
+        <button onClick={() => setPage('archives')} style={{
+          background:'none', border:'1px solid var(--border)', borderRadius:8,
+          color:'var(--muted)', fontSize:11, padding:'4px 10px', cursor:'pointer', letterSpacing:'0.5px',
+        }}>Archives</button>
+      </div>
       <Countdown />
       <div style={{ background:'var(--surface)', borderRadius:18, padding:'20px 18px', border:'1px solid var(--border)', marginBottom:16 }}>
         <div style={{ fontSize:10, letterSpacing:'2px', color:'var(--red)', fontWeight:600, textTransform:'uppercase', marginBottom:10 }}>Question du jour</div>
