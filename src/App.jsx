@@ -11,6 +11,8 @@ import { useAuth } from './lib/useAuth'
 import { useProfile } from './lib/useProfile'
 import { usePWAInstall } from './lib/usePWAInstall'
 import Discussion from './components/Discussion'
+import UsernameModal from './components/UsernameModal'
+import { useUsername } from './lib/useUsername'
 
 const COLORS = { a: '#ff4d6a', b: '#4d9fff', c: '#a78bfa' }
 const KEYS = ['a', 'b', 'c']
@@ -39,6 +41,7 @@ export default function App() {
   const { user, sendMagicLink, signOut } = useAuth()
   const { streak } = useProfile(user?.id)
   const { canInstall, install } = usePWAInstall()
+  const { username, loading: usernameLoading, saveUsername } = useUsername(user?.id)
 
   useEffect(() => {
     if (userVote) fetchTomorrow().then(setTomorrow)
@@ -50,6 +53,8 @@ export default function App() {
   if (page === 'login') return <Login onBack={() => setPage('home')} sendMagicLink={sendMagicLink} />
   if (page === 'profile') return <Profile user={user} onBack={() => setPage('home')} signOut={signOut} />
   if (page === 'admin' && isAdmin) return <Admin onBack={() => setPage('home')} signOut={signOut} />
+
+  const showUsernameModal = user && !usernameLoading && !username
 
   if (loading) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Chargement...</p></Screen>
   if (error) return <Screen><p style={{ color:'var(--red)', fontSize:14 }}>Erreur : {error}</p></Screen>
@@ -69,6 +74,7 @@ export default function App() {
 
   return (
     <Screen>
+      {showUsernameModal && <UsernameModal onSave={saveUsername} />}
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
@@ -173,7 +179,7 @@ export default function App() {
 
           {/* Discussion */}
           <div style={{ background:'var(--surface)', borderRadius:14, padding:'16px', border:'1px solid var(--border)' }}>
-            <Discussion questionId={question.id} user={user} userVote={userVote} />
+            <Discussion questionId={question.id} user={user} userVote={userVote} username={username} />
           </div>
 
         </div>

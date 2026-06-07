@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useComments } from '../lib/useComments'
+import { fetchUsernames } from '../lib/useUsername'
 
 const OPTION_COLORS = { a: '#ff4d6a', b: '#4d9fff', c: '#a78bfa' }
 
@@ -17,10 +18,17 @@ function avatar(userId) {
   return colors[i]
 }
 
-export default function Discussion({ questionId, user, userVote }) {
+export default function Discussion({ questionId, user, userVote, username }) {
   const { comments, loading, addComment, deleteComment } = useComments(questionId)
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
+  const [usernames, setUsernames] = useState({})
+
+  useEffect(() => {
+    if (!comments.length) return
+    const ids = [...new Set(comments.map(c => c.user_id))]
+    fetchUsernames(ids).then(setUsernames)
+  }, [comments])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -54,6 +62,7 @@ export default function Discussion({ questionId, user, userVote }) {
               background: avatar(c.user_id), opacity: 0.8,
             }} />
             <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 12, padding: '8px 12px', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 10, color: 'var(--muted)', marginBottom: 3 }}>{usernames[c.user_id] || 'Anonyme'}</div>
               <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.45 }}>{c.content}</div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
                 <span style={{ fontSize: 10, color: 'var(--muted)' }}>{timeAgo(c.created_at)}</span>
@@ -79,7 +88,7 @@ export default function Discussion({ questionId, user, userVote }) {
           <input
             value={text}
             onChange={e => setText(e.target.value.slice(0, 280))}
-            placeholder="Ton avis…"
+            placeholder={username ? `${username}, ton avis…` : 'Ton avis…'}
             style={{
               flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
               borderRadius: 12, padding: '8px 12px', color: 'var(--text)',
