@@ -11,7 +11,7 @@ export default function UsernameModal({ onSave }) {
     if (trimmed.length < 2) { setError('2 caractères minimum.'); return }
     setSaving(true)
     const err = await onSave(trimmed)
-    if (err) setError(err)
+    if (err) setError(err.includes('unique') || err.includes('duplicate') ? 'Ce pseudo est déjà pris.' : err)
     setSaving(false)
   }
 
