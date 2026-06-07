@@ -9,6 +9,7 @@ import { useQuestion, fetchTomorrow } from './lib/useQuestion'
 import { useVote } from './lib/useVote'
 import { useAuth } from './lib/useAuth'
 import { useProfile } from './lib/useProfile'
+import { usePWAInstall } from './lib/usePWAInstall'
 
 const COLORS = { a: '#ff4d6a', b: '#4d9fff', c: '#a78bfa' }
 const KEYS = ['a', 'b', 'c']
@@ -36,6 +37,7 @@ export default function App() {
   const { userVote, castVote } = useVote(question?.id)
   const { user, sendMagicLink, signOut } = useAuth()
   const { streak } = useProfile(user?.id)
+  const { canInstall, install } = usePWAInstall()
 
   useEffect(() => {
     if (userVote) fetchTomorrow().then(setTomorrow)
@@ -146,6 +148,19 @@ export default function App() {
           }}>
             Partager mes résultats
           </button>
+
+          {/* Install PWA */}
+          {canInstall && (
+            <button onClick={install} style={{
+              background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14,
+              color: 'var(--muted)', fontSize: 12, padding: '12px 16px', cursor: 'pointer',
+              fontFamily: 'var(--font-body)', textAlign: 'left', lineHeight: 1.5,
+            }}>
+              <span style={{ color: 'var(--text)', fontWeight: 500 }}>Installe Pulse sur ton écran d'accueil</span>
+              <br />
+              <span style={{ fontSize: 11 }}>Ne rate plus aucune question du jour</span>
+            </button>
+          )}
 
           {/* Teaser demain */}
           {tomorrow && (
