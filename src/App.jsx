@@ -57,7 +57,7 @@ export default function App() {
 
   const isAdmin = user?.email === 'juliendealmeida91@me.com'
 
-  if (page === 'archives') return <Archives onBack={() => setPage('home')} />
+  if (page === 'archives') return <Archives onBack={() => setPage('home')} user={user} />
   if (page === 'login') return <Login onBack={() => setPage('home')} sendMagicLink={sendMagicLink} />
   if (page === 'profile') return <Profile user={user} onBack={() => setPage('home')} signOut={signOut} />
   if (page === 'admin' && isAdmin) return <Admin onBack={() => setPage('home')} signOut={signOut} />

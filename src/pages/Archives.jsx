@@ -16,8 +16,8 @@ function formatDate(dateStr) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-export default function Archives({ onBack }) {
-  const { questions, loading } = useArchives()
+export default function Archives({ onBack, user }) {
+  const { questions, loading } = useArchives(user?.id)
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg)', padding: '48px 20px 60px' }}>
@@ -38,9 +38,19 @@ export default function Archives({ onBack }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {questions.map(q => (
-            <div key={q.id} style={{ background: 'var(--surface)', borderRadius: 18, padding: '18px 16px', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 10, letterSpacing: '1.5px', color: 'var(--muted)', marginBottom: 8 }}>
-                {formatDate(q.date)} · {q.total.toLocaleString('fr-FR')} vote{q.total !== 1 ? 's' : ''}
+            <div key={q.id} style={{
+              background: 'var(--surface)', borderRadius: 18, padding: '18px 16px',
+              border: q.userVote ? `1px solid ${COLORS[q.userVote].fill}44` : '1px solid var(--border)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ fontSize: 10, letterSpacing: '1.5px', color: 'var(--muted)' }}>
+                  {formatDate(q.date)} · {q.total.toLocaleString('fr-FR')} vote{q.total !== 1 ? 's' : ''}
+                </div>
+                {q.userVote && (
+                  <div style={{ fontSize: 9, letterSpacing: '1px', fontWeight: 700, color: COLORS[q.userVote].fill, background: `${COLORS[q.userVote].fill}18`, borderRadius: 6, padding: '2px 7px' }}>
+                    MON VOTE
+                  </div>
+                )}
               </div>
               <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 14, lineHeight: 1.35 }}>
                 {q.text}
@@ -51,11 +61,14 @@ export default function Archives({ onBack }) {
                   const color = COLORS[key]
                   const p = pct(q.votes, key, q.total)
                   const isWinner = p === Math.max(...KEYS.map(k => pct(q.votes, k, q.total)))
+                  const isMyVote = q.userVote === key
                   return (
-                    <div key={key} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--surface2)', height: 36 }}>
+                    <div key={key} style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--surface2)', height: 36, outline: isMyVote ? `2px solid ${color.fill}` : 'none' }}>
                       <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${p}%`, background: color.bg, transition: 'width 0.6s ease' }} />
                       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 12px', height: '100%' }}>
-                        <span style={{ fontSize: 12, color: isWinner ? '#fff' : 'var(--muted)', fontWeight: isWinner ? 500 : 400 }}>{label}</span>
+                        <span style={{ fontSize: 12, color: isWinner ? '#fff' : 'var(--muted)', fontWeight: isMyVote ? 700 : isWinner ? 500 : 400 }}>
+                          {label}{isMyVote ? ' ←' : ''}
+                        </span>
                         <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-display)', color: isWinner ? color.fill : 'var(--muted)' }}>{p}%</span>
                       </div>
                     </div>
