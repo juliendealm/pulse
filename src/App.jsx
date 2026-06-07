@@ -9,6 +9,7 @@ import { useQuestion, fetchTomorrow } from './lib/useQuestion'
 import { useVote } from './lib/useVote'
 import { useAuth } from './lib/useAuth'
 import { useProfile } from './lib/useProfile'
+import { supabase } from './lib/supabase'
 import { usePWAInstall } from './lib/usePWAInstall'
 import Discussion from './components/Discussion'
 import UsernameModal from './components/UsernameModal'
@@ -37,6 +38,7 @@ export default function App() {
   const [page, setPage] = useState('home')
   const [tomorrow, setTomorrow] = useState(null)
   const { question, votes, totalVotes, loading, error } = useQuestion()
+  const [commentCount, setCommentCount] = useState(0)
   const { userVote, castVote } = useVote(question?.id)
   const { user, sendMagicLink, signOut } = useAuth()
   const { streak } = useProfile(user?.id)
@@ -46,6 +48,12 @@ export default function App() {
   useEffect(() => {
     if (userVote) fetchTomorrow().then(setTomorrow)
   }, [userVote])
+
+  useEffect(() => {
+    if (!question) return
+    supabase.from('comments').select('id', { count: 'exact', head: true }).eq('question_id', question.id)
+      .then(({ count }) => setCommentCount(count || 0))
+  }, [question])
 
   const isAdmin = user?.email === 'juliendealmeida91@me.com'
 
@@ -115,6 +123,11 @@ export default function App() {
       <div style={{ background:'var(--surface)', borderRadius:18, padding:'20px 18px', border:'1px solid var(--border)', marginBottom:16 }}>
         <div style={{ fontSize:10, letterSpacing:'2px', color:'var(--red)', fontWeight:600, textTransform:'uppercase', marginBottom:10 }}>Question du jour</div>
         <h1 style={{ fontFamily:'var(--font-display)', fontSize:20, fontWeight:700, color:'var(--text)', lineHeight:1.35 }}>{question.text}</h1>
+        {!userVote && commentCount > 0 && (
+          <div style={{ marginTop:10, fontSize:11, color:'var(--muted)' }}>
+            {commentCount} personne{commentCount > 1 ? 's' : ''} en débat
+          </div>
+        )}
       </div>
 
       {/* Options */}

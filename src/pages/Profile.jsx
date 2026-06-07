@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useProfile } from '../lib/useProfile'
+import { useUsername } from '../lib/useUsername'
 
 const COLORS = {
   a: '#ff4d6a',
@@ -13,6 +15,17 @@ function formatDate(dateStr) {
 
 export default function Profile({ user, onBack, signOut }) {
   const { history, streak, loading } = useProfile(user?.id)
+  const { username, saveUsername } = useUsername(user?.id)
+  const [editingName, setEditingName] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [nameError, setNameError] = useState(null)
+
+  async function handleSaveName() {
+    if (newName.trim().length < 2) { setNameError('2 caractères minimum.'); return }
+    const err = await saveUsername(newName.trim())
+    if (err) setNameError(err.includes('unique') || err.includes('duplicate') ? 'Ce pseudo est déjà pris.' : err)
+    else { setEditingName(false); setNameError(null) }
+  }
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg)', padding: '48px 20px 60px' }}>
@@ -31,8 +44,31 @@ export default function Profile({ user, onBack, signOut }) {
         </div>
 
         <div style={{ background: 'var(--surface)', borderRadius: 18, padding: '20px 18px', border: '1px solid var(--border)', marginBottom: 16 }}>
-          <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.5px' }}>Connecté en tant que</div>
-          <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 500 }}>{user?.email}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4 }}>Pseudo</div>
+              {editingName ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <input autoFocus value={newName} onChange={e => { setNewName(e.target.value.slice(0, 20)); setNameError(null) }}
+                    style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 10px', color: 'var(--text)', fontSize: 14, fontFamily: 'var(--font-body)', outline: 'none' }} />
+                  {nameError && <span style={{ fontSize: 11, color: 'var(--red)' }}>{nameError}</span>}
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={handleSaveName} style={{ background: 'var(--red)', border: 'none', borderRadius: 6, color: '#fff', fontSize: 11, padding: '4px 10px', cursor: 'pointer' }}>Sauvegarder</button>
+                    <button onClick={() => { setEditingName(false); setNameError(null) }} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--muted)', fontSize: 11, padding: '4px 10px', cursor: 'pointer' }}>Annuler</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ fontSize: 14, color: 'var(--text)', fontWeight: 500 }}>{username || '—'}</div>
+              )}
+            </div>
+            {!editingName && (
+              <button onClick={() => { setNewName(username || ''); setEditingName(true) }}
+                style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--muted)', fontSize: 11, padding: '4px 10px', cursor: 'pointer' }}>
+                Modifier
+              </button>
+            )}
+          </div>
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: 11, color: 'var(--muted)' }}>{user?.email}</div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
