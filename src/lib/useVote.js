@@ -12,12 +12,14 @@ export function useVote(questionId) {
     if (saved) setUserVote(saved)
   }, [questionId])
 
-  async function castVote(option) {
+  async function castVote(option, userId = null) {
     if (userVote || submitting || !questionId) return
     setSubmitting(true)
     setUserVote(option)
     localStorage.setItem(storageKey, option)
-    const { error } = await supabase.from('votes').insert({ question_id: questionId, option })
+    const payload = { question_id: questionId, option }
+    if (userId) payload.user_id = userId
+    const { error } = await supabase.from('votes').insert(payload)
     if (error) {
       setUserVote(null)
       localStorage.removeItem(storageKey)
