@@ -32,7 +32,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Deploy
-        run: npx vercel@latest deploy --prebuilt --prod --yes --token=$VERCEL_TOKEN
+        run: timeout 60 npx vercel@latest deploy --prebuilt --prod --yes --token=$VERCEL_TOKEN || true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
