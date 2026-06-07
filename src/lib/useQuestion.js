@@ -49,3 +49,11 @@ export function useQuestion() {
 
   return { question, votes, totalVotes, loading, error }
 }
+
+export async function fetchTomorrow() {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  const tomorrow = d.toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' })
+  const { data } = await supabase.from('questions').select('text').eq('date', tomorrow).single()
+  return data?.text || null
+}
