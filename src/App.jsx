@@ -5,6 +5,7 @@ import ShareButton from './components/ShareButton'
 import Archives from './pages/Archives'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 import { useQuestion } from './lib/useQuestion'
 import { useVote } from './lib/useVote'
 import { useAuth } from './lib/useAuth'
@@ -23,6 +24,7 @@ export default function App() {
   if (page === 'archives') return <Archives onBack={() => setPage('home')} />
   if (page === 'login') return <Login onBack={() => setPage('home')} sendMagicLink={sendMagicLink} />
   if (page === 'profile') return <Profile user={user} onBack={() => setPage('home')} signOut={signOut} />
+  if (page === 'admin' && user?.email === 'juliendealmeida91@me.com') return <Admin onBack={() => setPage('home')} />
 
   if (loading) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Chargement...</p></Screen>
   if (error) return <Screen><p style={{ color:'var(--red)', fontSize:14 }}>Erreur : {error}</p></Screen>
@@ -44,10 +46,10 @@ export default function App() {
         }}>Archives</button>
         <div style={{ fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, letterSpacing:'4px', color:'var(--red)' }}>PULSE</div>
         {user ? (
-          <button onClick={() => setPage('profile')} style={{
+          <button onClick={() => setPage(user.email === 'juliendealmeida91@me.com' ? 'admin' : 'profile')} style={{
             background:'none', border:'1px solid var(--border)', borderRadius:8,
             color:'var(--muted)', fontSize:11, padding:'4px 10px', cursor:'pointer', letterSpacing:'0.5px',
-          }}>Profil</button>
+          }}>{user.email === 'juliendealmeida91@me.com' ? 'Admin' : 'Profil'}</button>
         ) : (
           <button onClick={() => setPage('login')} style={{
             background:'none', border:'1px solid var(--border)', borderRadius:8,
