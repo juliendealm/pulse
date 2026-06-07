@@ -3,8 +3,10 @@ import Countdown from './components/Countdown'
 import VoteOption from './components/VoteOption'
 import ShareButton from './components/ShareButton'
 import Archives from './pages/Archives'
+import Login from './pages/Login'
 import { useQuestion } from './lib/useQuestion'
 import { useVote } from './lib/useVote'
+import { useAuth } from './lib/useAuth'
 
 function getPct(votes, key, total) {
   if (!total) return 0
@@ -15,8 +17,10 @@ export default function App() {
   const [page, setPage] = useState('home')
   const { question, votes, totalVotes, loading, error } = useQuestion()
   const { userVote, castVote } = useVote(question?.id)
+  const { user, sendMagicLink, signOut } = useAuth()
 
   if (page === 'archives') return <Archives onBack={() => setPage('home')} />
+  if (page === 'login') return <Login onBack={() => setPage('home')} sendMagicLink={sendMagicLink} />
 
   if (loading) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Chargement...</p></Screen>
   if (error) return <Screen><p style={{ color:'var(--red)', fontSize:14 }}>Erreur : {error}</p></Screen>
@@ -32,12 +36,22 @@ export default function App() {
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
-        <div style={{ width:60 }} />
-        <div style={{ fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, letterSpacing:'4px', color:'var(--red)' }}>PULSE</div>
         <button onClick={() => setPage('archives')} style={{
           background:'none', border:'1px solid var(--border)', borderRadius:8,
           color:'var(--muted)', fontSize:11, padding:'4px 10px', cursor:'pointer', letterSpacing:'0.5px',
         }}>Archives</button>
+        <div style={{ fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, letterSpacing:'4px', color:'var(--red)' }}>PULSE</div>
+        {user ? (
+          <button onClick={signOut} style={{
+            background:'none', border:'1px solid var(--border)', borderRadius:8,
+            color:'var(--muted)', fontSize:11, padding:'4px 10px', cursor:'pointer', letterSpacing:'0.5px',
+          }}>Déco.</button>
+        ) : (
+          <button onClick={() => setPage('login')} style={{
+            background:'none', border:'1px solid var(--border)', borderRadius:8,
+            color:'var(--muted)', fontSize:11, padding:'4px 10px', cursor:'pointer', letterSpacing:'0.5px',
+          }}>Connexion</button>
+        )}
       </div>
       <Countdown />
       <div style={{ background:'var(--surface)', borderRadius:18, padding:'20px 18px', border:'1px solid var(--border)', marginBottom:16 }}>
