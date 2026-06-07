@@ -10,6 +10,7 @@ import { useVote } from './lib/useVote'
 import { useAuth } from './lib/useAuth'
 import { useProfile } from './lib/useProfile'
 import { usePWAInstall } from './lib/usePWAInstall'
+import Discussion from './components/Discussion'
 
 const COLORS = { a: '#ff4d6a', b: '#4d9fff', c: '#a78bfa' }
 const KEYS = ['a', 'b', 'c']
@@ -169,6 +170,11 @@ export default function App() {
               <div style={{ fontFamily:'var(--font-display)', fontSize:15, color:'var(--text)', lineHeight:1.35, opacity:0.7 }}>{tomorrow}</div>
             </div>
           )}
+
+          {/* Discussion */}
+          <div style={{ background:'var(--surface)', borderRadius:14, padding:'16px', border:'1px solid var(--border)' }}>
+            <Discussion questionId={question.id} user={user} userVote={userVote} />
+          </div>
 
         </div>
       )}
