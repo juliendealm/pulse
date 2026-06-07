@@ -46,7 +46,7 @@ export default function App() {
   if (page === 'archives') return <Archives onBack={() => setPage('home')} />
   if (page === 'login') return <Login onBack={() => setPage('home')} sendMagicLink={sendMagicLink} />
   if (page === 'profile') return <Profile user={user} onBack={() => setPage('home')} signOut={signOut} />
-  if (page === 'admin' && isAdmin) return <Admin onBack={() => setPage('home')} />
+  if (page === 'admin' && isAdmin) return <Admin onBack={() => setPage('home')} signOut={signOut} />
 
   if (loading) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Chargement...</p></Screen>
   if (error) return <Screen><p style={{ color:'var(--red)', fontSize:14 }}>Erreur : {error}</p></Screen>

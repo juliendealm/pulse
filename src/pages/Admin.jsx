@@ -13,7 +13,7 @@ const field = {
   outline: 'none', width: '100%', boxSizing: 'border-box',
 }
 
-export default function Admin({ onBack }) {
+export default function Admin({ onBack, signOut }) {
   const { questions, loading, addQuestion, deleteQuestion } = useAdmin()
   const [form, setForm] = useState({ date: '', text: '', optionA: '', optionB: '', optionC: '' })
   const [error, setError] = useState(null)
@@ -37,9 +37,10 @@ export default function Admin({ onBack }) {
     <div style={{ minHeight: '100dvh', background: 'var(--bg)', padding: '48px 20px 60px' }}>
       <div style={{ maxWidth: 520, margin: '0 auto' }}>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
           <button onClick={onBack} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--muted)', padding: '6px 12px', fontSize: 12, cursor: 'pointer' }}>← Retour</button>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800, letterSpacing: '4px', color: 'var(--red)' }}>ADMIN</span>
+          <button onClick={signOut} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--muted)', padding: '6px 12px', fontSize: 12, cursor: 'pointer' }}>Déconnexion</button>
         </div>
 
         {/* Add form */}
