@@ -14,6 +14,7 @@ import { usePWAInstall } from './lib/usePWAInstall'
 import Discussion from './components/Discussion'
 import UsernameModal from './components/UsernameModal'
 import { useUsername } from './lib/useUsername'
+import { shareCard } from './lib/generateShareCard'
 
 const COLORS = { a: '#ff4d6a', b: '#4d9fff', c: '#a78bfa' }
 const KEYS = ['a', 'b', 'c']
@@ -70,14 +71,18 @@ export default function App() {
 
   const options = question.options || []
 
-  function handleShare() {
+  const [sharing, setSharing] = useState(false)
+
+  async function handleShareImage() {
+    setSharing(true)
+    await shareCard({ questionText: question.text, options, votes, totalVotes, userVote })
+    setSharing(false)
+  }
+
+  function handleShareText() {
     const text = buildShareText(question.text, votes, totalVotes, userVote, options)
-    if (navigator.share) {
-      navigator.share({ text })
-    } else {
-      navigator.clipboard.writeText(text)
-      alert('Résultats copiés !')
-    }
+    if (navigator.share) navigator.share({ text })
+    else { navigator.clipboard.writeText(text); alert('Résultats copiés !') }
   }
 
   return (
@@ -168,13 +173,22 @@ export default function App() {
         <div style={{ marginTop:16, display:'flex', flexDirection:'column', gap:10, animation:'fadeUp 0.4s ease' }}>
 
           {/* Share */}
-          <button onClick={handleShare} style={{
-            background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14,
-            color:'var(--text)', fontSize:13, padding:'13px', cursor:'pointer',
-            fontFamily:'var(--font-body)', fontWeight:500, letterSpacing:'0.3px',
-          }}>
-            Partager mes résultats
-          </button>
+          <div style={{ display:'flex', gap:8 }}>
+            <button onClick={handleShareImage} disabled={sharing} style={{
+              flex:1, background:'var(--red)', border:'none', borderRadius:14,
+              color:'#fff', fontSize:13, padding:'13px', cursor:sharing ? 'default' : 'pointer',
+              fontFamily:'var(--font-body)', fontWeight:500, opacity: sharing ? 0.7 : 1,
+            }}>
+              {sharing ? 'Génération…' : 'Partager en image'}
+            </button>
+            <button onClick={handleShareText} style={{
+              background:'var(--surface)', border:'1px solid var(--border)', borderRadius:14,
+              color:'var(--muted)', fontSize:13, padding:'13px 16px', cursor:'pointer',
+              fontFamily:'var(--font-body)',
+            }}>
+              Texte
+            </button>
+          </div>
 
           {/* Install PWA */}
           {canInstall && (
