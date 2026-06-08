@@ -45,6 +45,7 @@ export default function App() {
   const { streak } = useProfile(user?.id)
   const { canInstall, install } = usePWAInstall()
   const { username, loading: usernameLoading, saveUsername } = useUsername(user?.id)
+  const [sharing, setSharing] = useState(false)
 
   useEffect(() => {
     if (userVote) fetchTomorrow().then(setTomorrow)
@@ -70,8 +71,6 @@ export default function App() {
   if (!question) return <Screen><p style={{ color:'var(--muted)', fontSize:14 }}>Aucune question aujourd'hui.</p></Screen>
 
   const options = question.options || []
-
-  const [sharing, setSharing] = useState(false)
 
   async function handleShareImage() {
     setSharing(true)
