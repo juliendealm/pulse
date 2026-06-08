@@ -19,7 +19,7 @@ function avatar(userId) {
 }
 
 export default function Discussion({ questionId, user, userVote, username }) {
-  const { comments, loading, addComment, deleteComment } = useComments(questionId)
+  const { comments, likes, loading, addComment, deleteComment, toggleLike } = useComments(questionId)
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
   const [usernames, setUsernames] = useState({})
@@ -64,8 +64,21 @@ export default function Discussion({ questionId, user, userVote, username }) {
             <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 12, padding: '8px 12px', border: '1px solid var(--border)' }}>
               <div style={{ fontSize: 10, color: 'var(--muted)', marginBottom: 3 }}>{usernames[c.user_id] || 'Anonyme'}</div>
               <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.45 }}>{c.content}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontSize: 10, color: 'var(--muted)' }}>{timeAgo(c.created_at)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 10, color: 'var(--muted)' }}>{timeAgo(c.created_at)}</span>
+                  <button onClick={() => toggleLike(c.id, user?.id)} style={{
+                    background: 'none', border: 'none', cursor: user ? 'pointer' : 'default',
+                    display: 'flex', alignItems: 'center', gap: 3, padding: 0,
+                    color: likes[c.id]?.includes(user?.id) ? 'var(--red)' : 'var(--muted)',
+                    fontSize: 11,
+                  }}>
+                    <span style={{ fontSize: 13 }}>{likes[c.id]?.includes(user?.id) ? '♥' : '♡'}</span>
+                    {(likes[c.id]?.length || 0) > 0 && (
+                      <span>{likes[c.id].length}</span>
+                    )}
+                  </button>
+                </div>
                 {user?.id === c.user_id && (
                   <button onClick={() => deleteComment(c.id)} style={{
                     background: 'none', border: 'none', color: 'var(--muted)',
