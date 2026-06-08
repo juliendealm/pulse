@@ -121,7 +121,14 @@ export default function App() {
 
       {/* Question */}
       <div style={{ background:'var(--surface)', borderRadius:18, padding:'20px 18px', border:'1px solid var(--border)', marginBottom:16 }}>
-        <div style={{ fontSize:10, letterSpacing:'2px', color:'var(--red)', fontWeight:600, textTransform:'uppercase', marginBottom:10 }}>Question du jour</div>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
+          <div style={{ fontSize:10, letterSpacing:'2px', color:'var(--red)', fontWeight:600, textTransform:'uppercase' }}>Question du jour</div>
+          {totalVotes > 0 && (
+            <div style={{ fontSize:11, color:'var(--muted)' }}>
+              {totalVotes.toLocaleString('fr-FR')} {totalVotes > 1 ? 'participants' : 'participant'}
+            </div>
+          )}
+        </div>
         <h1 style={{ fontFamily:'var(--font-display)', fontSize:20, fontWeight:700, color:'var(--text)', lineHeight:1.35 }}>{question.text}</h1>
         {!userVote && commentCount > 0 && (
           <div style={{ marginTop:10, fontSize:11, color:'var(--muted)' }}>
